@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     redis_url: str = "redis://redis:6379/0"
 
     # ── External APIs ─────────────────────────────────────────────────────────
-    cryptopanic_api_key: str = ""
+    messari_api_key: str = ""     # free at messari.io/account/api
     coingecko_api_key: str = ""   # empty → unauthenticated (free tier)
 
     # ── Binance base URLs ─────────────────────────────────────────────────────

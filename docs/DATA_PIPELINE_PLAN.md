@@ -566,4 +566,21 @@ Expected kline row order (REST): open time, open, high, low, close, volume, clos
 
 ## Deviations (the agent fills this in)
 
-_Nothing yet. Record every difference between this plan and what the real APIs return, with the date and the fix applied._
+### DEV-001 — CryptoPanic replaced by Messari API (2026-11-02)
+
+**Original plan:** `CryptoPanic API` for coin-specific headlines and community vote counts (positive/negative/important).
+
+**Reality:** CryptoPanic no longer offers a free API tier. The API key page requires a paid subscription.
+
+**Fix applied:**
+- Replaced `cryptopanic.py` client with `messari.py` client.
+- Messari `/v1/news` endpoint returns professional crypto-specific news with title, published_at, tags (coins), and content.
+- **F11 formula adaptation:** community vote fraction `0.5 * (pos - neg) / (pos + neg + 1)` is dropped. Instead:
+  - `item_score = vader_compound` (VADER on the title text — same as before)
+  - Source credibility weight added: Messari = 1.3×, all others = 1.0×
+  - Final formula: `item = item_score * source_weight`
+  - Recency decay and Fear & Greed blending unchanged.
+- `news_items` table keeps all columns; `votes_positive`, `votes_negative`, `votes_important` will be NULL for Messari items (expected, documented).
+- `.env.example` updated: `CRYPTOPANIC_API_KEY` → `MESSARI_API_KEY`.
+
+**Messari free tier limits:** 20 requests/minute, ~1,000/day. Our 15-minute polling schedule uses ~96 requests/day — well within limits.
