@@ -239,3 +239,4 @@ class BacktestTrade(Base):
     fees: Mapped[Optional[float]] = mapped_column(Numeric(24, 8))
     funding: Mapped[Optional[float]] = mapped_column(Numeric(24, 8))
     r_multiple: Mapped[Optional[float]] = mapped_column(REAL)
+

@@ -101,3 +101,4 @@ class MessariClient:
         url = f"{self.URL}/{coin_slug}" if coin_slug else self.URL
         resp = self.http.get(url, params={"limit": limit}, headers=headers)
         return parse_messari_news(resp.json(), coin_ticker=coin_ticker)
+

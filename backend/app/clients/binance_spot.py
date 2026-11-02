@@ -58,3 +58,4 @@ class BinanceSpotClient:
             params["startTime"] = start_time
         resp = self.http.get(url, params=params)
         return parse_spot_klines(resp.json(), symbol=symbol, interval=interval)
+

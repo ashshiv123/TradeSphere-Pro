@@ -87,3 +87,4 @@ class ResilientHttpClient:
                 backoff *= 2.0
 
         raise httpx.RequestError(f"Failed to fetch {url} after {self.max_retries} attempts.")
+

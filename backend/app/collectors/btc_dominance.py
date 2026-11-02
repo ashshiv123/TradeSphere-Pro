@@ -37,3 +37,4 @@ def poll_btc_dominance(db: Session):
         logger.error("BTC dominance collector failed: %s", exc)
     finally:
         client.close()
+

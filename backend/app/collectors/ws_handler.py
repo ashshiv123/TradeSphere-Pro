@@ -97,3 +97,4 @@ def handle_ws_message(db: Session, msg: Dict[str, Any]):
         except Exception as exc:
             db.rollback()
             logger.warning("Error saving liquidation for %s: %s", symbol, exc)
+

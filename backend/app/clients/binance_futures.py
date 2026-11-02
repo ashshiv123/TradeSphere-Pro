@@ -218,3 +218,4 @@ class BinanceFuturesClient:
         url = f"{self.base_url}/fapi/v1/premiumIndex"
         resp = self.http.get(url, params={"symbol": symbol.upper()})
         return parse_premium_index(resp.json())
+

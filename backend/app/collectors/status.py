@@ -22,3 +22,4 @@ def record_collector_error(db: Session, name: str, error_msg: str):
         update_collector_status(db, name, success=False, error_msg=error_msg)
     except Exception as exc:
         logger.warning("Failed to record error for %s: %s", name, exc)
+

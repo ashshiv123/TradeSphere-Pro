@@ -85,3 +85,4 @@ class BinanceWebSocketRunner:
 
     def stop(self):
         self._running = False
+

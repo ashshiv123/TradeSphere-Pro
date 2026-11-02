@@ -51,3 +51,4 @@ def poll_long_short(db: Session, symbols: List[str], period: str = "4h"):
         logger.error("Long/Short collector failed: %s", exc)
     finally:
         client.close()
+

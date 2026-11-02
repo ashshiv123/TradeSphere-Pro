@@ -55,3 +55,4 @@ class CoinGeckoClient:
             headers["x-cg-demo-api-key"] = self.api_key
         resp = self.http.get(self.URL, headers=headers)
         return parse_coingecko_global(resp.json())
+

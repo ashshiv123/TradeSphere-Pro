@@ -37,3 +37,4 @@ def poll_fear_greed(db: Session, limit: int = 5):
         logger.error("Fear & Greed collector failed: %s", exc)
     finally:
         client.close()
+

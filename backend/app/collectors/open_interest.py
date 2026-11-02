@@ -37,3 +37,4 @@ def poll_open_interest(db: Session, symbols: List[str], period: str = "4h"):
         logger.error("OI collector failed: %s", exc)
     finally:
         client.close()
+

@@ -212,3 +212,4 @@ def downgrade() -> None:
     op.drop_table("trade_plans")
     op.drop_table("signal_explanations")
     op.drop_table("signals")
+

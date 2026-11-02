@@ -37,3 +37,4 @@ def poll_news(db: Session, limit: int = 50):
         logger.error("News collector failed: %s", exc)
     finally:
         client.close()
+

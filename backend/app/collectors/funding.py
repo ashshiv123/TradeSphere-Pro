@@ -37,3 +37,4 @@ def poll_funding(db: Session, symbols: List[str]):
         logger.error("Funding collector failed: %s", exc)
     finally:
         client.close()
+

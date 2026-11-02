@@ -52,3 +52,4 @@ def poll_candles(db: Session, symbols: List[str], intervals: List[str] = ["4h", 
     finally:
         f_client.close()
         s_client.close()
+

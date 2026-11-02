@@ -59,3 +59,4 @@ def load_scheduled_events(db: Session, filepath: str = "data/scheduled_events.js
         db.rollback()
         record_collector_error(db, collector_name, error_msg=str(exc))
         logger.error("Failed to load scheduled events: %s", exc)
+

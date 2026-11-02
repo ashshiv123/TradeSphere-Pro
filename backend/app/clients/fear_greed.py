@@ -51,3 +51,4 @@ class FearGreedClient:
     def get_latest(self, limit: int = 10) -> List[ParsedFearGreed]:
         resp = self.http.get(self.URL, params={"limit": limit})
         return parse_fear_greed(resp.json())
+

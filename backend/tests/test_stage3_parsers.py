@@ -133,3 +133,4 @@ def test_parse_messari_news_synthetic():
     assert items[0].currency == "BTC"
     assert items[0].vader_compound is not None
     assert items[0].vader_compound > 0.3  # Positive headline should score positive
+
