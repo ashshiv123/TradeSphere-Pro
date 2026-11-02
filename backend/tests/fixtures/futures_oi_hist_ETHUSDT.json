@@ -1,0 +1,37 @@
+[
+  {
+    "symbol": "ETHUSDT",
+    "sumOpenInterest": "2369477.90300000",
+    "sumOpenInterestValue": "5350902293.91189400",
+    "CMCCirculatingSupply": "122177241.12773326",
+    "timestamp": 1793563200000
+  },
+  {
+    "symbol": "ETHUSDT",
+    "sumOpenInterest": "2359860.91600000",
+    "sumOpenInterestValue": "5366960885.43132000",
+    "CMCCirculatingSupply": "122177241.12773326",
+    "timestamp": 1793577600000
+  },
+  {
+    "symbol": "ETHUSDT",
+    "sumOpenInterest": "2375467.08400000",
+    "sumOpenInterestValue": "5482981859.27628000",
+    "CMCCirculatingSupply": "122180209.38070501",
+    "timestamp": 1793592000000
+  },
+  {
+    "symbol": "ETHUSDT",
+    "sumOpenInterest": "2361241.67300000",
+    "sumOpenInterestValue": "5392673581.63182500",
+    "CMCCirculatingSupply": "122180209.38070501",
+    "timestamp": 1793606400000
+  },
+  {
+    "symbol": "ETHUSDT",
+    "sumOpenInterest": "2354533.33000000",
+    "sumOpenInterestValue": "5382062921.71390000",
+    "CMCCirculatingSupply": "122180209.38070501",
+    "timestamp": 1793620800000
+  }
+]

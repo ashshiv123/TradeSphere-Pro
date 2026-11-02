@@ -1,0 +1,260 @@
+[
+  {
+    "endpoint": "futures_klines_BTCUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_klines_ETHUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_klines_SOLUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_klines_BNBUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_klines_XRPUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "spot_klines_BTCUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "spot_klines_ETHUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "spot_klines_SOLUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "spot_klines_BNBUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "spot_klines_XRPUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_funding_BTCUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_funding_ETHUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_funding_SOLUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_funding_BNBUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_funding_XRPUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_oi_hist_BTCUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_oi_hist_ETHUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_oi_hist_SOLUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_oi_hist_BNBUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_oi_hist_XRPUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_global_BTCUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_global_ETHUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_global_SOLUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_global_BNBUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_global_XRPUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_account_BTCUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_account_ETHUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_account_SOLUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_account_BNBUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_account_XRPUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_position_BTCUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_position_ETHUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_position_SOLUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_position_BNBUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_ls_top_position_XRPUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_premium_BTCUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_premium_ETHUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_premium_SOLUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_premium_BNBUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "futures_premium_XRPUSDT",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "fear_greed_full",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "coingecko_global",
+    "status": 200,
+    "ok": true,
+    "note": ""
+  },
+  {
+    "endpoint": "messari_news",
+    "status": "SKIP",
+    "ok": false,
+    "note": "MESSARI_API_KEY missing from .env"
+  }
+]

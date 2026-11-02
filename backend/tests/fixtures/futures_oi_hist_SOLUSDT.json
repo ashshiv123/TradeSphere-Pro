@@ -1,0 +1,37 @@
+[
+  {
+    "symbol": "SOLUSDT",
+    "sumOpenInterest": "9063962.10000000",
+    "sumOpenInterestValue": "851559239.29500000",
+    "CMCCirculatingSupply": "590094947.52432470",
+    "timestamp": 1793563200000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "sumOpenInterest": "9109171.10000000",
+    "sumOpenInterestValue": "860882352.90550940",
+    "CMCCirculatingSupply": "590094947.52432470",
+    "timestamp": 1793577600000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "sumOpenInterest": "9095812.72000000",
+    "sumOpenInterestValue": "869104905.39600000",
+    "CMCCirculatingSupply": "590150211.79771730",
+    "timestamp": 1793592000000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "sumOpenInterest": "9175012.30000000",
+    "sumOpenInterestValue": "864658473.04387380",
+    "CMCCirculatingSupply": "590150211.79771730",
+    "timestamp": 1793606400000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "sumOpenInterest": "9317326.22000000",
+    "sumOpenInterestValue": "876448382.22212860",
+    "CMCCirculatingSupply": "590150211.79771730",
+    "timestamp": 1793620800000
+  }
+]

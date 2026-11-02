@@ -13,15 +13,16 @@ from app.config import get_settings
 
 settings = get_settings()
 
-# Create the engine once at import time.
-# pool_pre_ping=True: test the connection before using it (handles DB restarts).
-engine = create_engine(
-    settings.database_url,
-    pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=10,
-    echo=False,  # set True to log every SQL statement (noisy, dev only)
-)
+# Detect if we're running against SQLite (unit tests) or PostgreSQL (real/Docker).
+_is_sqlite = settings.database_url.startswith("sqlite")
+
+# Build engine kwargs - pool_size and max_overflow are Postgres-only.
+_engine_kwargs: dict = {"pool_pre_ping": True, "echo": False}
+if not _is_sqlite:
+    _engine_kwargs["pool_size"] = 5
+    _engine_kwargs["max_overflow"] = 10
+
+engine = create_engine(settings.database_url, **_engine_kwargs)
 
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 

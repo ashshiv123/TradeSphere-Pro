@@ -1,0 +1,72 @@
+[
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793347200001,
+    "fundingRate": "0.00000000",
+    "markPrice": "707.87360497",
+    "rateType": "Regular"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793376000000,
+    "fundingRate": "0.00000000",
+    "markPrice": "700.03379812",
+    "rateType": "Regular"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793404800002,
+    "fundingRate": "0.00000000",
+    "markPrice": "704.37000000",
+    "rateType": "Regular"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793433600000,
+    "fundingRate": "0.00000000",
+    "markPrice": "700.20000000",
+    "rateType": "Regular"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793462400000,
+    "fundingRate": "0.00000000",
+    "markPrice": "705.64297808",
+    "rateType": "Regular"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793491200000,
+    "fundingRate": "0.00000000",
+    "markPrice": "704.18000000",
+    "rateType": "Regular"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793520000003,
+    "fundingRate": "0.00003588",
+    "markPrice": "707.01000000",
+    "rateType": "Regular"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793548800000,
+    "fundingRate": "0.00006552",
+    "markPrice": "715.27903927",
+    "rateType": "Regular"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793577600005,
+    "fundingRate": "0.00007195",
+    "markPrice": "713.06000000",
+    "rateType": "Regular"
+  },
+  {
+    "symbol": "BNBUSDT",
+    "fundingTime": 1793606400001,
+    "fundingRate": "0.00000000",
+    "markPrice": "708.15812247",
+    "rateType": "Regular"
+  }
+]

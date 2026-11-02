@@ -1,0 +1,37 @@
+[
+  {
+    "symbol": "XRPUSDT",
+    "sumOpenInterest": "272914127.50000000",
+    "sumOpenInterestValue": "340151285.16114986",
+    "CMCCirculatingSupply": "63351197653.00000000",
+    "timestamp": 1793563200000
+  },
+  {
+    "symbol": "XRPUSDT",
+    "sumOpenInterest": "271670162.60000000",
+    "sumOpenInterestValue": "339751050.36866650",
+    "CMCCirculatingSupply": "63351197653.00000000",
+    "timestamp": 1793577600000
+  },
+  {
+    "symbol": "XRPUSDT",
+    "sumOpenInterest": "274819869.00000000",
+    "sumOpenInterestValue": "346685264.74350000",
+    "CMCCirculatingSupply": "63351197653.00000000",
+    "timestamp": 1793592000000
+  },
+  {
+    "symbol": "XRPUSDT",
+    "sumOpenInterest": "278299244.70000000",
+    "sumOpenInterestValue": "347940928.40050894",
+    "CMCCirculatingSupply": "63351197653.00000000",
+    "timestamp": 1793606400000
+  },
+  {
+    "symbol": "XRPUSDT",
+    "sumOpenInterest": "281446837.40000000",
+    "sumOpenInterestValue": "351949270.16870000",
+    "CMCCirculatingSupply": "63351197653.00000000",
+    "timestamp": 1793620800000
+  }
+]

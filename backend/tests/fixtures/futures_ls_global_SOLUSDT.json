@@ -1,0 +1,37 @@
+[
+  {
+    "symbol": "SOLUSDT",
+    "longAccount": "0.7619",
+    "longShortRatio": "3.1999",
+    "shortAccount": "0.2381",
+    "timestamp": 1793563200000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "longAccount": "0.7659",
+    "longShortRatio": "3.2717",
+    "shortAccount": "0.2341",
+    "timestamp": 1793577600000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "longAccount": "0.7655",
+    "longShortRatio": "3.2644",
+    "shortAccount": "0.2345",
+    "timestamp": 1793592000000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "longAccount": "0.7648",
+    "longShortRatio": "3.2517",
+    "shortAccount": "0.2352",
+    "timestamp": 1793606400000
+  },
+  {
+    "symbol": "SOLUSDT",
+    "longAccount": "0.7657",
+    "longShortRatio": "3.2680",
+    "shortAccount": "0.2343",
+    "timestamp": 1793620800000
+  }
+]

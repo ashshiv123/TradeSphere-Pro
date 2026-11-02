@@ -584,3 +584,63 @@ Expected kline row order (REST): open time, open, high, low, close, volume, clos
 - `.env.example` updated: `CRYPTOPANIC_API_KEY` → `MESSARI_API_KEY`.
 
 **Messari free tier limits:** 20 requests/minute, ~1,000/day. Our 15-minute polling schedule uses ~96 requests/day — well within limits.
+
+---
+
+### DEV-002 - Funding rate: extra field rateType (2026-11-02)
+
+**Endpoint:** GET /fapi/v1/fundingRate
+
+**Plan said fields:** symbol, fundingTime, fundingRate, markPrice
+
+**Real response fields:** symbol, fundingTime, fundingRate, markPrice, rateType
+
+**Fix:** Added rate_type TEXT column to funding_rates table. Values like "Regular". Stored for future use.
+
+---
+
+### DEV-003 - Open interest history: extra field CMCCirculatingSupply (2026-11-02)
+
+**Endpoint:** GET /futures/data/openInterestHist
+
+**Real response adds:** CMCCirculatingSupply field (circulating supply from CoinMarketCap)
+
+**Fix:** Added cmc_circulating_supply NUMERIC(30,8) column to open_interest table.
+
+---
+
+### DEV-004 - Long/short ratios: field names are longAccount/shortAccount not long_share/short_share (2026-11-02)
+
+**All three L/S endpoints** return: longAccount, shortAccount, longShortRatio, symbol, timestamp
+
+**Plan used:** long_share, short_share. These are the same values, just different names.
+
+**Fix:** ORM keeps long_share/short_share internally. Parser maps longAccount->long_share, shortAccount->short_share.
+
+---
+
+### DEV-005 - Premium index: extra fields estimatedSettlePrice and interestRate (2026-11-02)
+
+**Real fields:** symbol, markPrice, indexPrice, estimatedSettlePrice, lastFundingRate, interestRate, nextFundingTime, time
+
+**Fix:** Only markPrice, indexPrice, lastFundingRate, nextFundingTime used. Timestamp field is named "time" (Unix ms).
+
+---
+
+### DEV-006 - Klines return 12 elements. Plan appendix listed 12, confirmed correct.
+
+Both futures (/fapi/v1/klines) and spot (/api/v3/klines) return 12-element arrays.
+Index mapping: [0]=open_time [1]=open [2]=high [3]=low [4]=close [5]=volume
+[6]=close_time [7]=quote_vol [8]=trades [9]=taker_buy_base [10]=taker_buy_quote [11]=ignore(always "0")
+
+---
+
+### DEV-007 - Fear & Greed: timestamp and value are strings, not integers (2026-11-02)
+
+**Fix:** Parser casts value=int(value), timestamp=int(timestamp) before storing.
+
+---
+
+### DEV-008 - Binance connectivity confirmed, no region block (2026-11-02)
+
+42/43 endpoints returned HTTP 200. Only skip was Messari (key not yet set).

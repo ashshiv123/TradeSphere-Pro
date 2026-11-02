@@ -1,0 +1,37 @@
+[
+  {
+    "symbol": "XRPUSDT",
+    "longAccount": "0.7473",
+    "longShortRatio": "2.9573",
+    "shortAccount": "0.2527",
+    "timestamp": 1793563200000
+  },
+  {
+    "symbol": "XRPUSDT",
+    "longAccount": "0.7484",
+    "longShortRatio": "2.9746",
+    "shortAccount": "0.2516",
+    "timestamp": 1793577600000
+  },
+  {
+    "symbol": "XRPUSDT",
+    "longAccount": "0.7479",
+    "longShortRatio": "2.9667",
+    "shortAccount": "0.2521",
+    "timestamp": 1793592000000
+  },
+  {
+    "symbol": "XRPUSDT",
+    "longAccount": "0.7523",
+    "longShortRatio": "3.0371",
+    "shortAccount": "0.2477",
+    "timestamp": 1793606400000
+  },
+  {
+    "symbol": "XRPUSDT",
+    "longAccount": "0.7520",
+    "longShortRatio": "3.0323",
+    "shortAccount": "0.2480",
+    "timestamp": 1793620800000
+  }
+]

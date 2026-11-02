@@ -1,0 +1,37 @@
+[
+  {
+    "symbol": "BNBUSDT",
+    "sumOpenInterest": "569709.44000000",
+    "sumOpenInterestValue": "404043631.94240000",
+    "CMCCirculatingSupply": "131511346.88000000",
+    "timestamp": 1793563200000
+  },
+  {
+    "symbol": "BNBUSDT",
+    "sumOpenInterest": "572082.08000000",
+    "sumOpenInterestValue": "407928847.96480000",
+    "CMCCirculatingSupply": "131511346.88000000",
+    "timestamp": 1793577600000
+  },
+  {
+    "symbol": "BNBUSDT",
+    "sumOpenInterest": "568477.20000000",
+    "sumOpenInterestValue": "406199698.48800000",
+    "CMCCirculatingSupply": "131511306.54000000",
+    "timestamp": 1793592000000
+  },
+  {
+    "symbol": "BNBUSDT",
+    "sumOpenInterest": "569460.57000000",
+    "sumOpenInterestValue": "403271248.40261630",
+    "CMCCirculatingSupply": "131511306.54000000",
+    "timestamp": 1793606400000
+  },
+  {
+    "symbol": "BNBUSDT",
+    "sumOpenInterest": "570412.95000000",
+    "sumOpenInterestValue": "402157271.89459270",
+    "CMCCirculatingSupply": "131511306.54000000",
+    "timestamp": 1793620800000
+  }
+]
