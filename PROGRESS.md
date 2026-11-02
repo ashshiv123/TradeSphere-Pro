@@ -86,10 +86,12 @@ _Last updated: 2026-11-02_
 
 ---
 
-## Stage 7: Derivatives and sentiment features ⬜
+## Stage 7: Derivatives and sentiment features ✅
 
-- [ ] F5 Funding trend, F6 OI trend, F7 L/S ratio, F8 Basis, F9 Liquidation zones, F11 News
-- [ ] As-of joins, missing-data policy, look-ahead test
+- [x] F5 Funding trend, F6 OI trend, F7 L/S ratio, F8 Basis, F9 Liquidation zones, F11 News
+- [x] As-of joins and missing-data policy (NULL returned with field recorded in missing list)
+- [x] Full look-ahead bias test passes (future raw points do not alter past candle features)
+- [x] Unit tests in `test_stage7_derivatives_sentiment.py` (10 tests pass)
 
 ---
 
