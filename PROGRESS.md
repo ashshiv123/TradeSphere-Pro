@@ -106,12 +106,18 @@ _Last updated: 2026-11-02_
 
 ---
 
-## Stage 9: Quality, docs, final report ⬜
+## Stage 9: Quality, docs, final report ✅
 
-- [ ] `check_pipeline.py` all PASS
-- [ ] Full pytest suite green
-- [ ] `README.md` with architecture + setup guide
-- [ ] Final report written
+- [x] `scripts/check_pipeline.py` pipeline continuity and bounds audit tool (PASS)
+- [x] Full pytest test suite passing (41 / 41 tests green)
+- [x] Comprehensive `README.md` with Mermaid architecture diagram, 13 fields table, schema, run instructions, and limitations
+- [x] Final report and stage transition prepared
+
+---
+
+## Stage 10 (optional): Run on a server ⬜
+
+- [ ] Awaiting user decision to proceed with remote VPS provisioning and configuration
 
 ---
 
