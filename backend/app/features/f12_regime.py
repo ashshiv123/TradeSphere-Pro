@@ -49,3 +49,4 @@ def compute_f12_latest(df: pd.DataFrame, window: int = 540) -> Optional[float]:
     s = compute_f12_series(df, window=window)
     val = s.iloc[-1]
     return None if pd.isna(val) else float(val)
+

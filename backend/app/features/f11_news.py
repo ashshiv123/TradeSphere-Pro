@@ -117,3 +117,4 @@ def compute_f11_latest(
         score = clip(fg, -1.0, 1.0) if fear_greed_val is not None else 0.0
 
     return float(score), news_pause, is_missing
+

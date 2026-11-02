@@ -314,3 +314,20 @@ class CollectorStatus(Base):
     last_error_at: Mapped[Optional[datetime]] = mapped_column(TZ)
     last_error: Mapped[Optional[str]] = mapped_column(Text)
     rows_written_total: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
+
+
+# ---------------------------------------------------------------------------
+# Stage 12-15 Decision and Trading Models
+# ---------------------------------------------------------------------------
+from app.db.models_trading import (  # noqa: E402
+    Signal,
+    SignalExplanation,
+    TradePlan,
+    RiskEvent,
+    KillSwitchState,
+    Order,
+    Position,
+    EquitySnapshot,
+    BacktestRun,
+    BacktestTrade,
+)

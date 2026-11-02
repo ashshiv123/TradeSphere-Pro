@@ -81,3 +81,4 @@ class FeatureVector(BaseModel):
             "volume_ratio": self.volume_ratio,
             "news_pause": self.news_pause,
         }
+

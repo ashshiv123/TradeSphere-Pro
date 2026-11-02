@@ -119,3 +119,4 @@ def compute_f10_latest(df: pd.DataFrame) -> Tuple[Optional[float], Optional[floa
         None if pd.isna(v1) else float(v1),
         None if pd.isna(v2) else float(v2),
     )
+

@@ -509,3 +509,4 @@ def recompute_history(
         return _run(db)
     with SessionLocal() as s:
         return _run(s)
+

@@ -38,3 +38,4 @@ def compute_f01_latest(df: pd.DataFrame, window: int = 1080) -> Optional[float]:
     s = compute_f01_series(df, window=window)
     val = s.iloc[-1]
     return None if pd.isna(val) else float(val)
+

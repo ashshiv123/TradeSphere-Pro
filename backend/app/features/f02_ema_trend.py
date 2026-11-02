@@ -52,3 +52,4 @@ def compute_f02_latest(df: pd.DataFrame) -> Optional[float]:
     s = compute_f02_series(df)
     val = s.iloc[-1]
     return None if pd.isna(val) else float(val)
+

@@ -90,3 +90,4 @@ def compute_f06_latest(
         return -1.0
     else:  # price_change < 0 and oi_change < 0
         return -0.3
+

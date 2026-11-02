@@ -76,3 +76,4 @@ def compute_f08_latest(
 
     val = score.iloc[-1]
     return None if pd.isna(val) else float(val)
+

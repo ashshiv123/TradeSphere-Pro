@@ -135,3 +135,4 @@ def compute_f03_latest(df: pd.DataFrame) -> Optional[float]:
     div_val = detect_divergence_latest(high, low, rsi14, window=30)
     score = clip(base_val + div_val, -1.0, 1.0)
     return float(score)
+

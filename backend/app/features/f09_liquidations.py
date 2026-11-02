@@ -126,3 +126,4 @@ def compute_f09_latest(
     nearest_below = max(below_levels) if below_levels else None
 
     return nearest_above, None, nearest_below, None, "swing_proxy"
+

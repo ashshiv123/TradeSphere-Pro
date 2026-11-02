@@ -102,3 +102,4 @@ def compute_f13_latest(
         None if pd.isna(row["g13_btc_trend"]) else int(row["g13_btc_trend"]),
         latest_dominance,
     )
+

@@ -84,3 +84,4 @@ def compute_f05_latest(
         score *= 0.5
 
     return score
+

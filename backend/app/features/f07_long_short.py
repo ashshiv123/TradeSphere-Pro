@@ -72,3 +72,4 @@ def compute_f07_latest(
 
     final_score = clip(s + top_adj, -1.0, 1.0)
     return float(final_score)
+
