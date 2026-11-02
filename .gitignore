@@ -1,0 +1,50 @@
+# Secrets — never commit
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+venv/
+.venv/
+env/
+ENV/
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Alembic auto-generated (keep versions/ but ignore pycache inside)
+backend/alembic/__pycache__/
+
+# Docker volumes data (if mounted locally)
+pgdata/
+redisdata/
+
+# Data dumps / exports
+*.dump
+*.sql.gz
+*.csv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+

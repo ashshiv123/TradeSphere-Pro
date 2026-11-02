@@ -1,0 +1,13 @@
+[
+  {
+    "name": "EXAMPLE — Replace with real event",
+    "event_time": "2026-12-16T19:00:00Z",
+    "impact": "high"
+  },
+  {
+    "name": "US CPI release (example)",
+    "event_time": "2026-11-12T13:30:00Z",
+    "impact": "high"
+  }
+]
+
