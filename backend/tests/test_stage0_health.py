@@ -27,21 +27,29 @@ def test_logging_setup_importable():
     configure_logging("WARNING")  # should not raise
 
 
+def _get_app_paths(app):
+    paths = set()
+    for r in app.routes:
+        if hasattr(r, "original_router"):
+            for sub in r.original_router.routes:
+                if hasattr(sub, "path"):
+                    paths.add(sub.path)
+        elif hasattr(r, "path"):
+            paths.add(r.path)
+    return paths
+
+
 def test_fastapi_app_importable():
     """FastAPI app can be imported (routes registered without a DB)."""
-    # Patch DATABASE_URL to avoid real connection at import time
-    os.environ.setdefault("DATABASE_URL", "postgresql+psycopg://u:p@localhost/test")
     from app.main import app
-    # Check /health and /collectors/status routes exist
-    paths = [r.path for r in app.routes]
+    paths = _get_app_paths(app)
     assert "/health" in paths
 
 
 def test_routes_registered():
     """All expected routes are registered on the app."""
-    os.environ.setdefault("DATABASE_URL", "postgresql+psycopg://u:p@localhost/test")
     from app.main import app
-    paths = {r.path for r in app.routes}
+    paths = _get_app_paths(app)
     expected = {"/health", "/collectors/status", "/features/{symbol}/latest",
                 "/features/{symbol}", "/data/{table}/latest"}
     missing = expected - paths

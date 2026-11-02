@@ -13,8 +13,8 @@ from app.config import get_settings
 
 settings = get_settings()
 
-# Detect if we're running against SQLite (unit tests) or PostgreSQL (real/Docker).
-_is_sqlite = settings.database_url.startswith("sqlite")
+db_url = settings.database_url or "sqlite:///:memory:"
+_is_sqlite = db_url.startswith("sqlite")
 
 # Build engine kwargs - pool_size and max_overflow are Postgres-only.
 _engine_kwargs: dict = {"pool_pre_ping": True, "echo": False}
@@ -22,7 +22,7 @@ if not _is_sqlite:
     _engine_kwargs["pool_size"] = 5
     _engine_kwargs["max_overflow"] = 10
 
-engine = create_engine(settings.database_url, **_engine_kwargs)
+engine = create_engine(db_url, **_engine_kwargs)
 
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 

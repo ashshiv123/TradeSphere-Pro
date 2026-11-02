@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import (
-    BigInteger, Boolean, DateTime, Index, Integer,
+    BigInteger, Boolean, DateTime, Index, Integer, JSON,
     Numeric, REAL, SmallInteger, Text, UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -21,6 +21,8 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 # Alias: timezone-aware datetime. On Postgres this becomes TIMESTAMPTZ.
 # On SQLite (used in unit tests) it stores tz info correctly too.
 TZ = DateTime(timezone=True)
+JSON_TYPE = JSON().with_variant(JSONB, "postgresql")
+BIGINT_ID = BigInteger().with_variant(Integer, "sqlite")
 
 
 class Base(DeclarativeBase):
@@ -151,7 +153,7 @@ class Liquidation(Base):
     """
     __tablename__ = "liquidations"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(BIGINT_ID, primary_key=True, autoincrement=True)
     symbol: Mapped[str] = mapped_column(Text, nullable=False)
     ts: Mapped[datetime] = mapped_column(TZ, nullable=False)
     side: Mapped[str] = mapped_column(Text, nullable=False)
@@ -178,7 +180,7 @@ class NewsItem(Base):
     """
     __tablename__ = "news_items"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(BIGINT_ID, primary_key=True, autoincrement=True)
     source: Mapped[str] = mapped_column(Text, nullable=False)
     external_id: Mapped[str] = mapped_column(Text, nullable=False)
     currency: Mapped[Optional[str]] = mapped_column(Text)
@@ -189,7 +191,7 @@ class NewsItem(Base):
     votes_negative: Mapped[Optional[int]] = mapped_column(Integer)
     votes_important: Mapped[Optional[int]] = mapped_column(Integer)
     vader_compound: Mapped[Optional[float]] = mapped_column(REAL)
-    raw: Mapped[Optional[dict]] = mapped_column(JSONB)
+    raw: Mapped[Optional[dict]] = mapped_column(JSON_TYPE)
 
     __table_args__ = (
         UniqueConstraint("source", "external_id", "currency",
@@ -292,8 +294,8 @@ class Feature(Base):
     atr: Mapped[Optional[float]] = mapped_column(REAL)
     close: Mapped[Optional[float]] = mapped_column(Numeric(24, 8))
     news_pause: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    raw: Mapped[Optional[dict]] = mapped_column(JSONB)
-    missing: Mapped[Optional[list]] = mapped_column(JSONB)
+    raw: Mapped[Optional[dict]] = mapped_column(JSON_TYPE)
+    missing: Mapped[Optional[list]] = mapped_column(JSON_TYPE)
     computed_at: Mapped[datetime] = mapped_column(TZ, nullable=False)
 
 

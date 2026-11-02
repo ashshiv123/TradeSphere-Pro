@@ -60,7 +60,7 @@ def test_all_tables_exist(engine):
 
 def test_candle_primary_key_columns(engine):
     inspector = inspect(engine)
-    pk_cols = {c["name"] for c in inspector.get_pk_constraint("candles")["constrained_columns"]}
+    pk_cols = set(inspector.get_pk_constraint("candles")["constrained_columns"])
     assert pk_cols == {"market", "symbol", "interval", "open_time"}
 
 

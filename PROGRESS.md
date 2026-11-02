@@ -76,11 +76,13 @@ _Last updated: 2026-11-02_
 
 ---
 
-## Stage 6: Price-derived features ⬜
+## Stage 6: Price-derived features ✅
 
-- [ ] F1 Momentum, F2 EMA trend, F3 RSI, F4 MACD, F10 Volume/SR, F12 Regime, F13 BTC correlation
-- [ ] `common.py` helpers
-- [ ] Unit tests pass
+- [x] F1 Momentum, F2 EMA trend, F3 RSI, F4 MACD, F10 Volume/SR, F12 Regime, F13 BTC correlation
+- [x] `common.py` helpers (clip, squash, rolling_z, ema, atr, rsi, percentile_rank, asof_join)
+- [x] Both full-history series and newest-candle functions for all 7 price features
+- [x] Unit tests in `test_stage6_price_features.py` (12 tests pass)
+- [x] Independent verification of F2 & F3 on real BTCUSDT data (0.00000000 difference, PASS)
 
 ---
 
