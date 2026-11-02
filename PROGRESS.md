@@ -95,12 +95,14 @@ _Last updated: 2026-11-02_
 
 ---
 
-## Stage 8: Feature pipeline + API ⬜
+## Stage 8: Feature pipeline + API ✅
 
-- [ ] `pipeline.py` — 4h feature job
-- [ ] `FeatureVector` Pydantic model
-- [ ] Redis cache + `features:updated` pub/sub
-- [ ] API routes `/features/{symbol}/latest` and `/features/{symbol}`
+- [x] `pipeline.py` — master feature calculation, `compute_features_for_candle`
+- [x] `FeatureVector` Pydantic model with `.scored_fields()` and `.gates()` helpers
+- [x] `get_latest_features`, `get_feature_history`, and `recompute_history` functions
+- [x] Redis cache (`features:latest:<symbol>`) + `features:updated` pub/sub event
+- [x] Read-only API routes `/features/{symbol}/latest`, `/features/{symbol}`, `/collectors/status`, `/data/{table}/latest`
+- [x] Integration tests in `test_stage8_pipeline_api.py` (all pass)
 
 ---
 
