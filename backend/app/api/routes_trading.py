@@ -378,3 +378,4 @@ async def websocket_stream(websocket: WebSocket):
         logger.warning("WS client disconnected with error: %s", exc)
         if websocket in _active_ws_clients:
             _active_ws_clients.remove(websocket)
+

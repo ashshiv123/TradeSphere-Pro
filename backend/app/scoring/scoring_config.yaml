@@ -25,3 +25,4 @@ thresholds:
   max_sl_atr_multiplier: 3.0
   reward_to_risk: 2.0
   time_stop_candles: 12
+

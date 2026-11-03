@@ -75,3 +75,4 @@ export default function Header({ riskStatus, onRefresh, wsConnected }) {
     </header>
   );
 }
+

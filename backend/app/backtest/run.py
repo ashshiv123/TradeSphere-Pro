@@ -141,3 +141,4 @@ if __name__ == "__main__":
     with SessionLocal() as db:
         run_id = run_and_save_backtest(bcfg, db)
         print(f"Run ID: {run_id}")
+

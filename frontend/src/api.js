@@ -19,3 +19,4 @@ export async function fetchJson(endpoint, options = {}) {
   }
   return res.json();
 }
+

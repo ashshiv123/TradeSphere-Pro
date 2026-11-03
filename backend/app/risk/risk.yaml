@@ -10,3 +10,4 @@ min_stop_distance_pct: 0.3
 max_same_direction_correlated: 2
 cooldown_candles_after_loss: 3
 default_starting_equity: 10000.0
+

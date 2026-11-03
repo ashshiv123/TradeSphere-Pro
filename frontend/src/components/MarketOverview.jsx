@@ -70,3 +70,4 @@ export default function MarketOverview({ marketData, onSelectSymbol, selectedSym
     </div>
   );
 }
+

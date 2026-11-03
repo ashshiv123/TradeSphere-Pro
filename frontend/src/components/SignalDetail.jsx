@@ -230,3 +230,4 @@ export default function SignalDetail({ selectedSymbol }) {
     </div>
   );
 }
+

@@ -124,3 +124,4 @@ export default function PositionsRisk({ positions, riskStatus }) {
     </div>
   );
 }
+

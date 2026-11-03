@@ -200,3 +200,4 @@ def test_decision_invariance_with_explanation(db_session, monkeypatch):
     assert sig.take_profit == pre_tp
     assert plan.qty == pre_qty
     assert plan.status == pre_status
+

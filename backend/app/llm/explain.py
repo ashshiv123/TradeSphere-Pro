@@ -317,3 +317,4 @@ def explain_signal(
     finally:
         if own_session:
             session.close()
+

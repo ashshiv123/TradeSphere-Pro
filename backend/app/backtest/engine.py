@@ -441,3 +441,4 @@ class Backtester:
                 "p95_r": p95_random,
             },
         }
+

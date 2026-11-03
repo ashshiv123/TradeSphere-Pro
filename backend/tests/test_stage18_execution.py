@@ -264,3 +264,4 @@ def test_reconciliation_and_unknown_position_detection(db_session, monkeypatch):
     assert ks is not None
     assert ks.active is True
     assert "Unknown position on exchange: XRPUSDT" in ks.reason
+

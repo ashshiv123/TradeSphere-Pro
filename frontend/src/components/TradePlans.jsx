@@ -132,3 +132,4 @@ export default function TradePlans({ plans, onRefresh }) {
     </div>
   );
 }
+
