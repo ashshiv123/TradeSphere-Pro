@@ -6,6 +6,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import os
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket, WebSocketDisconnect
@@ -27,6 +28,7 @@ from app.db.models_trading import (
 )
 from app.db.session import SessionLocal, get_session
 from app.llm.explain import explain_signal
+from app.execution.testnet_engine import TestnetExecutionEngine
 from app.risk.engine import load_risk_config
 from app.scoring.engine import load_scoring_config
 
@@ -187,15 +189,26 @@ async def approve_trade_plan(plan_id: int, db: Session = Depends(get_session)):
     db.commit()
     db.refresh(plan)
 
+    # If testnet keys are configured, execute plan directly on Binance Testnet
+    exec_result = None
+    if os.getenv("BINANCE_TESTNET_API_KEY"):
+        try:
+            engine = TestnetExecutionEngine(db)
+            exec_result = engine.execute_plan(plan)
+            logger.info("Executed plan id=%s on testnet: %s", plan.id, exec_result)
+        except Exception as exc:
+            logger.error("Testnet execution error on plan %s: %s", plan.id, exc)
+
     await broadcast_ws("plan_update", {
         "id": plan.id,
         "status": plan.status,
         "symbol": plan.symbol,
         "side": plan.side,
         "approved_by": plan.approved_by,
+        "execution": exec_result,
     })
 
-    return {"status": "approved", "plan": plan}
+    return {"status": "approved", "plan": plan, "execution": exec_result}
 
 
 @router.post("/plans/{plan_id}/reject")

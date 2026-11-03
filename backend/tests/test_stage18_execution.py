@@ -265,3 +265,36 @@ def test_reconciliation_and_unknown_position_detection(db_session, monkeypatch):
     assert ks.active is True
     assert "Unknown position on exchange: XRPUSDT" in ks.reason
 
+
+def test_zero_executed_qty_string_fallback(db_session, monkeypatch):
+    """
+    When exchange returns executedQty='0.0000' on initial MARKET response,
+    engine must NOT treat '0.0000' as a valid quantity; it must fall back to origQty / plan.qty.
+    """
+    monkeypatch.setenv("EXECUTION_MODE", "TESTNET")
+
+    class ZeroExecutedQtyMockClient(MockExchangeClient):
+        def place_order(self, **kwargs):
+            res = super().place_order(**kwargs)
+            if kwargs.get("order_type") == "MARKET":
+                res["executedQty"] = "0.0000"
+                res["cumQty"] = "0.0000"
+                res["origQty"] = str(kwargs.get("quantity"))
+            return res
+
+    mock_client = ZeroExecutedQtyMockClient()
+    engine = TestnetExecutionEngine(db_session, mock_client)
+
+    plan = _create_approved_plan(db_session)
+    res = engine.execute_plan(plan)
+
+    assert res["status"] == "executed"
+    assert res["filled_qty"] > 0
+    assert abs(res["filled_qty"] - float(plan.qty)) < 1e-6
+
+    # Verify Stop-Loss was placed with positive quantity, NOT 0
+    sl_orders = [o for o in mock_client.placed_orders if o["type"] == "STOP_MARKET"]
+    assert len(sl_orders) == 1
+    assert float(sl_orders[0]["origQty"]) > 0
+
+

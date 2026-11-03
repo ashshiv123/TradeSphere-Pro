@@ -9,6 +9,7 @@ import hmac
 import logging
 import os
 import time
+import urllib.parse
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 import httpx
@@ -53,41 +54,52 @@ class BinanceTestnetClient:
         self.api_key = api_key or os.getenv("BINANCE_TESTNET_API_KEY", "")
         self.api_secret = api_secret or os.getenv("BINANCE_TESTNET_SECRET", "")
 
-    def _sign_params(self, params: Dict[str, Any]) -> Dict[str, Any]:
+    def _build_signed_query(self, params: Dict[str, Any]) -> str:
         params = dict(params)
         params["timestamp"] = int(time.time() * 1000)
-        query_string = "&".join(f"{k}={v}" for k, v in sorted(params.items()))
-        signature = hmac.new(
+        query_str = urllib.parse.urlencode(params)
+        sig = hmac.new(
             self.api_secret.encode("utf-8"),
-            query_string.encode("utf-8"),
+            query_str.encode("utf-8"),
             hashlib.sha256,
         ).hexdigest()
-        params["signature"] = signature
-        return params
+        return f"{query_str}&signature={sig}"
 
     def get_account(self) -> Dict[str, Any]:
         """Fetch account balance and positions."""
         verify_testnet_mode_or_die()
         url = f"{self.BASE_URL}/fapi/v2/account"
-        params = self._sign_params({})
+        query = self._build_signed_query({})
         headers = {"X-MBX-APIKEY": self.api_key}
         with httpx.Client(timeout=10.0) as client:
-            resp = client.get(url, params=params, headers=headers)
+            resp = client.get(f"{url}?{query}", headers=headers)
             resp.raise_for_status()
             return resp.json()
 
     def get_open_orders(self, symbol: Optional[str] = None) -> List[Dict[str, Any]]:
         verify_testnet_mode_or_die()
-        url = f"{self.BASE_URL}/fapi/v1/openOrders"
+        headers = {"X-MBX-APIKEY": self.api_key}
         params: Dict[str, Any] = {}
         if symbol:
             params["symbol"] = symbol
-        params = self._sign_params(params)
-        headers = {"X-MBX-APIKEY": self.api_key}
+
+        orders: List[Dict[str, Any]] = []
         with httpx.Client(timeout=10.0) as client:
-            resp = client.get(url, params=params, headers=headers)
-            resp.raise_for_status()
-            return resp.json()
+            # 1. Standard open orders
+            url = f"{self.BASE_URL}/fapi/v1/openOrders"
+            query = self._build_signed_query(params)
+            resp = client.get(f"{url}?{query}", headers=headers)
+            if resp.status_code == 200:
+                orders.extend(resp.json())
+
+            # 2. Open algo orders (conditional stop-loss / take-profit)
+            algo_url = f"{self.BASE_URL}/fapi/v1/openAlgoOrders"
+            algo_query = self._build_signed_query(params)
+            algo_resp = client.get(f"{algo_url}?{algo_query}", headers=headers)
+            if algo_resp.status_code == 200:
+                orders.extend(algo_resp.json())
+
+        return orders
 
     def place_order(
         self,
@@ -101,37 +113,69 @@ class BinanceTestnetClient:
         client_order_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         verify_testnet_mode_or_die()
-        url = f"{self.BASE_URL}/fapi/v1/order"
-        params: Dict[str, Any] = {
-            "symbol": symbol,
-            "side": side.upper(),
-            "type": order_type.upper(),
-            "quantity": f"{quantity:.6f}".rstrip("0").rstrip("."),
-        }
-        if price:
-            params["price"] = f"{price:.2f}"
-            params["timeInForce"] = "GTC"
-        if stop_price:
-            params["stopPrice"] = f"{stop_price:.2f}"
-        if reduce_only:
-            params["reduceOnly"] = "true"
-        if client_order_id:
-            params["newClientOrderId"] = client_order_id
+        if quantity <= 0:
+            raise ValueError(f"Order quantity must be > 0, got {quantity}")
 
-        params = self._sign_params(params)
+        is_algo = order_type.upper() in ("STOP_MARKET", "TAKE_PROFIT_MARKET", "STOP", "TAKE_PROFIT")
         headers = {"X-MBX-APIKEY": self.api_key}
+
+        if is_algo:
+            # Binance Futures Algo Order API (/fapi/v1/algoOrder)
+            url = f"{self.BASE_URL}/fapi/v1/algoOrder"
+            params: Dict[str, Any] = {
+                "algoType": "CONDITIONAL",
+                "symbol": symbol,
+                "side": side.upper(),
+                "type": order_type.upper(),
+                "quantity": f"{quantity:.6f}".rstrip("0").rstrip("."),
+            }
+            if stop_price:
+                params["triggerPrice"] = f"{stop_price:.2f}"
+            elif price:
+                params["triggerPrice"] = f"{price:.2f}"
+            if price and order_type.upper() in ("STOP", "TAKE_PROFIT"):
+                params["price"] = f"{price:.2f}"
+            if reduce_only:
+                params["reduceOnly"] = "true"
+            if client_order_id:
+                params["clientAlgoId"] = client_order_id
+        else:
+            # Binance Standard Order API (/fapi/v1/order)
+            url = f"{self.BASE_URL}/fapi/v1/order"
+            params = {
+                "symbol": symbol,
+                "side": side.upper(),
+                "type": order_type.upper(),
+                "quantity": f"{quantity:.6f}".rstrip("0").rstrip("."),
+            }
+            if price:
+                params["price"] = f"{price:.2f}"
+                params["timeInForce"] = "GTC"
+            if stop_price:
+                params["stopPrice"] = f"{stop_price:.2f}"
+            if reduce_only:
+                params["reduceOnly"] = "true"
+            if client_order_id:
+                params["newClientOrderId"] = client_order_id
+
+        query = self._build_signed_query(params)
         with httpx.Client(timeout=10.0) as client:
-            resp = client.post(url, params=params, headers=headers)
+            resp = client.post(f"{url}?{query}", headers=headers)
             resp.raise_for_status()
             return resp.json()
 
-    def cancel_order(self, symbol: str, client_order_id: str) -> Dict[str, Any]:
+    def cancel_order(self, symbol: str, client_order_id: str, is_algo: bool = False) -> Dict[str, Any]:
         verify_testnet_mode_or_die()
-        url = f"{self.BASE_URL}/fapi/v1/order"
-        params = self._sign_params({"symbol": symbol, "origClientOrderId": client_order_id})
+        if is_algo or "-sl" in client_order_id or "-tp" in client_order_id:
+            url = f"{self.BASE_URL}/fapi/v1/algoOrder"
+            query = self._build_signed_query({"symbol": symbol, "clientAlgoId": client_order_id})
+        else:
+            url = f"{self.BASE_URL}/fapi/v1/order"
+            query = self._build_signed_query({"symbol": symbol, "origClientOrderId": client_order_id})
+
         headers = {"X-MBX-APIKEY": self.api_key}
         with httpx.Client(timeout=10.0) as client:
-            resp = client.delete(url, params=params, headers=headers)
+            resp = client.delete(f"{url}?{query}", headers=headers)
             resp.raise_for_status()
             return resp.json()
 
@@ -201,9 +245,18 @@ class TestnetExecutionEngine:
             self.db.commit()
             raise
 
-        fill_price = float(entry_resp.get("avgPrice") or entry_resp.get("price") or plan.entry_price)
-        filled_qty = float(entry_resp.get("executedQty") or plan.qty)
-        exchange_oid = str(entry_resp.get("orderId", ""))
+        # Determine actual filled quantity and price safely:
+        exec_qty = float(entry_resp.get("executedQty") or 0.0)
+        cum_qty = float(entry_resp.get("cumQty") or 0.0)
+        orig_qty = float(entry_resp.get("origQty") or 0.0)
+        plan_qty = float(plan.qty)
+        filled_qty = exec_qty if exec_qty > 0 else (cum_qty if cum_qty > 0 else (orig_qty if orig_qty > 0 else plan_qty))
+
+        avg_p = float(entry_resp.get("avgPrice") or 0.0)
+        p = float(entry_resp.get("price") or 0.0)
+        fill_price = avg_p if avg_p > 0 else (p if p > 0 else float(plan.entry_price))
+
+        exchange_oid = str(entry_resp.get("orderId") or entry_resp.get("algoId") or "")
 
         order_row = Order(
             plan_id=plan.id,
@@ -251,7 +304,7 @@ class TestnetExecutionEngine:
             self.db.add(Order(
                 plan_id=plan.id,
                 client_order_id=sl_cid,
-                exchange_order_id=str(sl_resp.get("orderId", "")),
+                exchange_order_id=str(sl_resp.get("algoId") or sl_resp.get("orderId", "")),
                 type="stop",
                 side=exit_side,
                 qty=filled_qty,
@@ -320,7 +373,7 @@ class TestnetExecutionEngine:
             self.db.add(Order(
                 plan_id=plan.id,
                 client_order_id=tp_cid,
-                exchange_order_id=str(tp_resp.get("orderId", "")),
+                exchange_order_id=str(tp_resp.get("algoId") or tp_resp.get("orderId", "")),
                 type="take_profit",
                 side=exit_side,
                 qty=filled_qty,

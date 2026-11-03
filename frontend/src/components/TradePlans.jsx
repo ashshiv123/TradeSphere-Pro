@@ -88,9 +88,9 @@ export default function TradePlans({ plans, onRefresh }) {
                   <td className="py-3 px-4 font-mono text-slate-300">${Number(p.risk_amount).toFixed(2)}</td>
                   <td className="py-3 px-4">
                     <span className={`px-2 py-0.5 rounded text-[11px] font-medium uppercase font-mono ${
-                      p.status === "approved"
+                      p.status === "approved" || p.status === "filled"
                         ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                        : p.status === "rejected"
+                        : p.status === "rejected" || p.status === "failed"
                         ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
                         : "bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse"
                     }`}>

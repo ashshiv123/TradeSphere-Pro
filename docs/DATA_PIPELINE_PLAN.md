@@ -644,3 +644,21 @@ Index mapping: [0]=open_time [1]=open [2]=high [3]=low [4]=close [5]=volume
 ### DEV-008 - Binance connectivity confirmed, no region block (2026-11-02)
 
 42/43 endpoints returned HTTP 200. Only skip was Messari (key not yet set).
+
+---
+
+### DEV-009 - Binance Futures Algo Orders Migration & Market Fill Parsing (2026-11-03)
+
+**Issue 1 (Binance Error -4120):**
+Binance Futures migrated all conditional orders (`STOP_MARKET`, `TAKE_PROFIT_MARKET`, `STOP`, `TAKE_PROFIT`, `TRAILING_STOP_MARKET`) away from `/fapi/v1/order` to the dedicated Algo Order endpoint:
+- **Endpoint:** `POST /fapi/v1/algoOrder`
+- **Required parameters:** `algoType="CONDITIONAL"`, `symbol`, `side`, `type`, `triggerPrice`, `quantity`, `reduceOnly="true"`, `clientAlgoId`.
+- **Open algo orders:** `GET /fapi/v1/openAlgoOrders`
+- **Cancel algo order:** `DELETE /fapi/v1/algoOrder` with `symbol` and `clientAlgoId` or `algoId`.
+Calling `/fapi/v1/order` with `STOP_MARKET` returned:
+`{"code":-4120,"msg":"Order type not supported for this endpoint. Please use the Algo Order API endpoints instead."}`
+
+**Issue 2 (Quantity Fallback on Market Orders):**
+When a MARKET entry order is placed, Binance's immediate HTTP response returns `executedQty: "0.0000"` (as match happens asynchronously in engine). Python's `"0.0000"` is a non-empty string and evaluates to truthy (`bool("0.0000") is True`), which evaluated to `0.0` when converted to float.
+- **Fix:** `filled_qty` properly falls back to `cumQty`, then `origQty`, then `plan.qty` when `float(exec_qty) <= 0`.
+- **Result:** Automated testnet order execution now successfully places Market entry, followed by conditional Stop-Loss and Take-Profit Algo orders directly on Binance Testnet with status 200 OK.
