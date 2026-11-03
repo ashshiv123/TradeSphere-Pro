@@ -28,7 +28,7 @@ from app.db.models_trading import (
 )
 from app.db.session import SessionLocal, get_session
 from app.llm.explain import explain_signal
-from app.execution.testnet_engine import TestnetExecutionEngine
+from app.execution.testnet_engine import BinanceTestnetClient, TestnetExecutionEngine
 from app.risk.engine import load_risk_config
 from app.scoring.engine import load_scoring_config
 
@@ -233,6 +233,99 @@ async def reject_trade_plan(plan_id: int, db: Session = Depends(get_session)):
 
 
 # ---------------------------------------------------------------------------
+# Live Binance Portfolio & Account
+# ---------------------------------------------------------------------------
+@router.get("/portfolio")
+def get_live_portfolio(db: Session = Depends(get_session)):
+    """
+    Returns real-time Binance Testnet portfolio:
+    - Wallet balance
+    - Unrealized PnL (live profit/loss)
+    - Margin balance (total equity)
+    - Available balance (free funds to trade)
+    - Active exchange positions with live PnL, entry price, liquidation price, notional
+    - Active open algo orders (Stop-Loss and Take-Profit)
+    """
+    client = BinanceTestnetClient()
+    try:
+        acct = client.get_account()
+        wallet_balance = float(acct.get("totalWalletBalance") or 0.0)
+        unrealized_pnl = float(acct.get("totalUnrealizedProfit") or 0.0)
+        total_equity = float(acct.get("totalMarginBalance") or 0.0)
+        available_balance = float(acct.get("availableBalance") or 0.0)
+
+        # Positions with non-zero amount
+        raw_positions = acct.get("positions", [])
+        active_positions = []
+        for p in raw_positions:
+            amt = float(p.get("positionAmt", 0.0))
+            if abs(amt) > 1e-6:
+                entry = float(p.get("entryPrice", 0.0))
+                pnl = float(p.get("unrealizedProfit", 0.0))
+                notional = float(p.get("notional", 0.0))
+                leverage = int(p.get("leverage", 1))
+                margin_invested = abs(notional) / leverage if leverage > 0 else abs(notional)
+                pnl_pct = (pnl / margin_invested * 100.0) if margin_invested > 0 else 0.0
+
+                active_positions.append({
+                    "symbol": p.get("symbol"),
+                    "side": "LONG" if amt > 0 else "SHORT",
+                    "qty": abs(amt),
+                    "entry_price": entry,
+                    "unrealized_pnl": pnl,
+                    "pnl_pct": round(pnl_pct, 2),
+                    "leverage": leverage,
+                    "notional": round(abs(notional), 2),
+                    "isolated": bool(p.get("isolated", False)),
+                    "liquidation_price": float(p.get("liquidationPrice") or 0.0),
+                })
+
+        # Open orders (including Algo orders like Stop-Loss and Take-Profit)
+        open_orders = client.get_open_orders()
+        formatted_orders = []
+        for o in open_orders:
+            formatted_orders.append({
+                "order_id": str(o.get("orderId") or o.get("algoId") or ""),
+                "client_order_id": o.get("clientOrderId") or o.get("clientAlgoId") or "",
+                "symbol": o.get("symbol"),
+                "type": o.get("orderType") or o.get("type"),
+                "side": o.get("side"),
+                "quantity": float(o.get("quantity") or o.get("origQty") or 0.0),
+                "trigger_price": float(o.get("triggerPrice") or o.get("stopPrice") or 0.0),
+                "price": float(o.get("price") or 0.0),
+                "reduce_only": bool(o.get("reduceOnly", False)),
+                "status": o.get("algoStatus") or o.get("status"),
+            })
+
+        return {
+            "status": "connected",
+            "exchange": "Binance Futures Testnet",
+            "wallet_balance": round(wallet_balance, 2),
+            "unrealized_pnl": round(unrealized_pnl, 2),
+            "total_equity": round(total_equity, 2),
+            "available_balance": round(available_balance, 2),
+            "positions": active_positions,
+            "open_orders": formatted_orders,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+    except Exception as exc:
+        logger.error("Failed to fetch live portfolio from Binance: %s", exc)
+        db_pos = db.scalars(select(Position).where(Position.status == "open")).all()
+        return {
+            "status": "fallback",
+            "error": str(exc),
+            "exchange": "Binance Futures Testnet (Offline)",
+            "wallet_balance": 5000.0,
+            "unrealized_pnl": 0.0,
+            "total_equity": 5000.0,
+            "available_balance": 5000.0,
+            "positions": [{"symbol": p.symbol, "side": p.side, "qty": float(p.qty), "entry_price": float(p.entry_price), "unrealized_pnl": 0.0, "pnl_pct": 0.0, "leverage": 2, "notional": float(p.qty) * float(p.entry_price)} for p in db_pos],
+            "open_orders": [],
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+
+# ---------------------------------------------------------------------------
 # Positions & Orders
 # ---------------------------------------------------------------------------
 @router.get("/positions")
@@ -264,8 +357,15 @@ def get_risk_status(db: Session = Depends(get_session)):
     open_pos = db.scalars(select(Position).where(Position.status == "open")).all()
     open_count = len(open_pos)
 
-    # Estimate margin used
-    equity = risk_cfg.get("default_starting_equity", 10000.0)
+    # Live equity from Binance Testnet if available
+    try:
+        acct = BinanceTestnetClient().get_account()
+        wallet_balance = float(acct.get("totalWalletBalance") or 0.0)
+        unrealized_pnl = float(acct.get("totalUnrealizedProfit") or 0.0)
+        equity = round(wallet_balance + unrealized_pnl, 2)
+    except Exception:
+        equity = risk_cfg.get("default_starting_equity", 5000.0)
+
     total_notional = sum(float(p.qty) * float(p.entry_price) for p in open_pos)
     total_margin = total_notional / risk_cfg.get("max_leverage", 3.0)
     exposure_pct = (total_margin / equity) * 100.0
