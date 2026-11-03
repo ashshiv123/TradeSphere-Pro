@@ -16,19 +16,14 @@ from sqlalchemy import (
     Numeric, REAL, SmallInteger, Text, UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
+from app.db.base import Base
 
 # Alias: timezone-aware datetime. On Postgres this becomes TIMESTAMPTZ.
 # On SQLite (used in unit tests) it stores tz info correctly too.
 TZ = DateTime(timezone=True)
 JSON_TYPE = JSON().with_variant(JSONB, "postgresql")
 BIGINT_ID = BigInteger().with_variant(Integer, "sqlite")
-
-
-class Base(DeclarativeBase):
-    """All ORM models inherit from this base.
-    Alembic reads Base.metadata for autogenerate."""
-    pass
 
 
 # ---------------------------------------------------------------------------

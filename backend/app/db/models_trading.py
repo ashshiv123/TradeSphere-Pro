@@ -35,7 +35,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON, REAL
 
-from app.db.models import Base
+from app.db.base import Base
 
 BIGINT_ID = BigInteger().with_variant(Integer, "sqlite")
 JSON_TYPE = JSON().with_variant(JSONB, "postgresql")

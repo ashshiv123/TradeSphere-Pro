@@ -31,6 +31,7 @@ from app.collectors.ws_handler import handle_ws_message
 from app.config import get_settings
 from app.db.session import SessionLocal
 from app.features.pipeline import compute_features_for_candle
+from app.signals.generator import process_features_into_signals
 from app.logging_setup import configure_logging
 
 settings = get_settings()
@@ -102,6 +103,14 @@ def run_feature_pipeline_job():
                 )
             except Exception as exc:
                 logger.warning("Error running feature job for %s: %s", sym, exc)
+
+    # Trigger decision layer: score signals and evaluate risk for new features
+    logger.info(">>> RUNNING DECISION LAYER SIGNAL GENERATOR <<<")
+    try:
+        signals = process_features_into_signals(symbols=settings.symbol_list, interval="4h", auto_explain=True)
+        logger.info("Decision layer generated %s signals", len(signals))
+    except Exception as exc:
+        logger.error("Decision layer signal generation failed: %s", exc)
 
 
 async def ws_message_dispatcher(msg: dict):

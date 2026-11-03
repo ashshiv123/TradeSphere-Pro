@@ -1,0 +1,12 @@
+# risk.yaml - Risk parameters for TradeSphere Pro (Section 4)
+risk_per_trade_pct: 1.0
+max_leverage: 3.0
+max_open_positions: 3
+max_total_exposure_pct: 30.0
+max_positions_per_symbol: 1
+daily_drawdown_pct: 3.0
+weekly_drawdown_pct: 6.0
+min_stop_distance_pct: 0.3
+max_same_direction_correlated: 2
+cooldown_candles_after_loss: 3
+default_starting_equity: 10000.0

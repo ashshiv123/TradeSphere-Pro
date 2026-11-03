@@ -1,0 +1,27 @@
+# scoring_config.yaml - Weights and thresholds for TradeSphere Pro Scoring Engine
+config_version: "v1.0"
+
+weights:
+  f01_momentum: 12
+  f02_ema_trend: 12
+  f03_rsi: 10
+  f04_macd: 10
+  f05_funding: 9
+  f06_open_interest: 9
+  f07_long_short: 8
+  f08_basis: 8
+  f10_volume_sr: 12
+  f11_news: 10
+
+thresholds:
+  long_threshold: 0.35
+  short_threshold: -0.35
+  min_confidence: 0.40
+  max_missing_full_mode: 2
+  volume_ratio_gate: 1.2
+  volume_gate_enabled: true
+  sl_atr_multiplier: 1.5
+  sl_cluster_buffer_atr: 0.25
+  max_sl_atr_multiplier: 3.0
+  reward_to_risk: 2.0
+  time_stop_candles: 12
