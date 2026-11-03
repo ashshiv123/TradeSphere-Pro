@@ -1,7 +1,26 @@
-import React from "react";
-import { Wallet, TrendingUp, TrendingDown, ShieldCheck, CheckCircle2, AlertCircle, RefreshCw, Layers } from "lucide-react";
+import React, { useState } from "react";
+import { Wallet, TrendingUp, TrendingDown, ShieldCheck, CheckCircle2, AlertCircle, RefreshCw, Layers, XCircle } from "lucide-react";
+import { fetchJson } from "../api";
 
 export default function LivePortfolio({ portfolio, onRefresh }) {
+  const [closingSymbol, setClosingSymbol] = useState(null);
+
+  const handleClosePosition = async (symbol) => {
+    if (!window.confirm(`Are you sure you want to CLOSE your ${symbol} position at Market Price to lock in your profit now?`)) {
+      return;
+    }
+    try {
+      setClosingSymbol(symbol);
+      const res = await fetchJson(`/positions/${symbol}/close`, { method: "POST" });
+      alert(`TRADE CLOSED! Closed ${symbol} at $${res.fill_price}. Realized PnL: $${res.realized_pnl} USDT.`);
+      onRefresh();
+    } catch (err) {
+      alert("Failed to close position: " + err.message);
+    } finally {
+      setClosingSymbol(null);
+    }
+  };
+
   if (!portfolio) {
     return (
       <div className="p-8 text-center border border-border rounded-xl bg-surface text-slate-400">
@@ -135,6 +154,7 @@ export default function LivePortfolio({ portfolio, onRefresh }) {
                   <th className="py-3 px-4">Leverage</th>
                   <th className="py-3 px-4">Floating PnL ($)</th>
                   <th className="py-3 px-4">Return (ROI %)</th>
+                  <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -166,6 +186,16 @@ export default function LivePortfolio({ portfolio, onRefresh }) {
                         }`}>
                           {posProfit ? "+" : ""}{Number(p.pnl_pct).toFixed(2)}%
                         </span>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <button
+                          disabled={closingSymbol === p.symbol}
+                          onClick={() => handleClosePosition(p.symbol)}
+                          className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs transition disabled:opacity-50 shadow-sm flex items-center gap-1.5 ml-auto"
+                        >
+                          <XCircle className="w-3.5 h-3.5" />
+                          {closingSymbol === p.symbol ? "Closing..." : "Close Trade (Market)"}
+                        </button>
                       </td>
                     </tr>
                   );
@@ -253,3 +283,4 @@ export default function LivePortfolio({ portfolio, onRefresh }) {
     </div>
   );
 }
+

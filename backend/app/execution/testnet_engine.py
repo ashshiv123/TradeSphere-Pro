@@ -164,20 +164,57 @@ class BinanceTestnetClient:
             resp.raise_for_status()
             return resp.json()
 
-    def cancel_order(self, symbol: str, client_order_id: str, is_algo: bool = False) -> Dict[str, Any]:
+    def cancel_order(
+        self,
+        symbol: str,
+        client_order_id: Optional[str] = None,
+        algo_id: Optional[int] = None,
+        order_id: Optional[int] = None,
+        is_algo: bool = False,
+    ) -> Dict[str, Any]:
         verify_testnet_mode_or_die()
-        if is_algo or "-sl" in client_order_id or "-tp" in client_order_id:
+        params: Dict[str, Any] = {"symbol": symbol}
+        if algo_id or is_algo or (client_order_id and ("-sl" in client_order_id or "-tp" in client_order_id)):
             url = f"{self.BASE_URL}/fapi/v1/algoOrder"
-            query = self._build_signed_query({"symbol": symbol, "clientAlgoId": client_order_id})
+            if algo_id:
+                params["algoId"] = algo_id
+            elif client_order_id:
+                params["clientAlgoId"] = client_order_id
         else:
             url = f"{self.BASE_URL}/fapi/v1/order"
-            query = self._build_signed_query({"symbol": symbol, "origClientOrderId": client_order_id})
+            if order_id:
+                params["orderId"] = order_id
+            elif client_order_id:
+                params["origClientOrderId"] = client_order_id
 
+        query = self._build_signed_query(params)
         headers = {"X-MBX-APIKEY": self.api_key}
         with httpx.Client(timeout=10.0) as client:
             resp = client.delete(f"{url}?{query}", headers=headers)
             resp.raise_for_status()
             return resp.json()
+
+    def cancel_all_open_orders(self, symbol: str) -> List[Dict[str, Any]]:
+        """Cancels all open regular and conditional orders for symbol."""
+        verify_testnet_mode_or_die()
+        results = []
+        open_orders = self.get_open_orders(symbol)
+        for o in open_orders:
+            try:
+                aid = o.get("algoId")
+                cid = o.get("clientAlgoId") or o.get("clientOrderId")
+                oid = o.get("orderId")
+                res = self.cancel_order(
+                    symbol=symbol,
+                    client_order_id=cid,
+                    algo_id=aid,
+                    order_id=oid,
+                    is_algo=bool(aid),
+                )
+                results.append(res)
+            except Exception as e:
+                logger.warning("Failed to cancel order on %s: %s", symbol, e)
+        return results
 
 
 class TestnetExecutionEngine:
@@ -392,6 +429,97 @@ class TestnetExecutionEngine:
             "stop_order_id": sl_cid,
             "fill_price": fill_price,
             "filled_qty": filled_qty,
+        }
+
+    def close_position(self, symbol: str) -> Dict[str, Any]:
+        """
+        Manually closes an active position at Market:
+        1. Queries Binance exchange positions for symbol.
+        2. Places a reduce-only MARKET order in the opposite direction.
+        3. Cancels all open Stop-Loss and Take-Profit orders for the symbol.
+        4. Updates Position status in DB to 'closed' with exit_reason='manual_close'.
+        5. Runs reconciliation.
+        """
+        verify_testnet_mode_or_die()
+        account = self.client.get_account()
+        pos_amt = 0.0
+        entry_price = 0.0
+        for p in account.get("positions", []):
+            if p["symbol"].upper() == symbol.upper():
+                pos_amt = float(p.get("positionAmt", 0.0))
+                entry_price = float(p.get("entryPrice", 0.0))
+                break
+
+        if abs(pos_amt) < 1e-6:
+            raise ValueError(f"No active position found on exchange for symbol {symbol}")
+
+        exit_side = "SELL" if pos_amt > 0 else "BUY"
+        qty = abs(pos_amt)
+        close_cid = f"tsp-manual-close-{symbol.lower()}-{int(time.time())}"
+
+        # 1. Place market close order
+        close_resp = self.client.place_order(
+            symbol=symbol,
+            side=exit_side,
+            order_type="MARKET",
+            quantity=qty,
+            reduce_only=True,
+            client_order_id=close_cid,
+        )
+
+        avg_p = float(close_resp.get("avgPrice") or 0.0)
+        p = float(close_resp.get("price") or 0.0)
+        fill_price = avg_p if avg_p > 0 else (p if p > 0 else entry_price)
+
+        # 2. Cancel all lingering open algo orders (Stop-Loss and Take-Profit)
+        cancelled_orders = self.client.cancel_all_open_orders(symbol)
+
+        # 3. Update DB position
+        now = datetime.now(timezone.utc)
+        db_pos = self.db.scalars(
+            select(Position).where(Position.symbol == symbol, Position.status == "open")
+        ).first()
+
+        realized_pnl = 0.0
+        if db_pos:
+            db_pos.status = "closed"
+            db_pos.closed_at = now
+            db_pos.exit_price = fill_price
+            db_pos.exit_reason = "manual_close"
+            if db_pos.side == "LONG":
+                realized_pnl = (fill_price - float(db_pos.entry_price)) * float(db_pos.qty)
+            else:
+                realized_pnl = (float(db_pos.entry_price) - fill_price) * float(db_pos.qty)
+            db_pos.pnl = realized_pnl
+            self.db.commit()
+
+        # 4. Record Order in DB
+        self.db.add(Order(
+            plan_id=db_pos.plan_id if db_pos else None,
+            client_order_id=close_cid,
+            exchange_order_id=str(close_resp.get("orderId", "")),
+            type="exit",
+            side=exit_side,
+            qty=qty,
+            price=fill_price,
+            status="filled",
+            filled_qty=qty,
+            avg_fill_price=fill_price,
+            raw=close_resp,
+        ))
+        self.db.commit()
+
+        # 5. Reconcile
+        self.reconcile_portfolio()
+
+        return {
+            "status": "closed",
+            "symbol": symbol,
+            "closed_qty": qty,
+            "fill_price": fill_price,
+            "realized_pnl": round(realized_pnl, 2),
+            "cancelled_orders_count": len(cancelled_orders),
+            "client_order_id": close_cid,
         }
 
     def reconcile_portfolio(self) -> Dict[str, Any]:

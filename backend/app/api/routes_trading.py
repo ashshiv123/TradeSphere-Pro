@@ -337,6 +337,25 @@ def get_positions(status: Optional[str] = None, db: Session = Depends(get_sessio
     return db.scalars(query).all()
 
 
+@router.post("/positions/{symbol}/close")
+async def close_open_position(symbol: str, db: Session = Depends(get_session)):
+    """
+    Manually closes an open position for symbol at market:
+    - Places reduce-only MARKET order on Binance Testnet
+    - Cancels Stop-Loss and Take-Profit orders
+    - Updates DB position with realized PnL
+    - Broadcasts websocket event
+    """
+    try:
+        engine = TestnetExecutionEngine(db)
+        result = engine.close_position(symbol)
+        await broadcast_ws("position_closed", result)
+        return result
+    except Exception as exc:
+        logger.error("Failed to close position for %s: %s", symbol, exc)
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
 @router.get("/orders")
 def get_orders(limit: int = 50, db: Session = Depends(get_session)):
     """Returns orders list."""
